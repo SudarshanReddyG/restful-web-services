@@ -3,6 +3,10 @@ package com.sudarshan.rest.restfulwebservices.user;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.HeadersBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,12 +36,20 @@ public class UserResource {
 	}
 	
 	@GetMapping("/users/{userId}")
-	public User retrieveUser(@PathVariable Integer userId) {
+	//public User retrieveUser(@PathVariable Integer userId) {
+	public Resource<User> retrieveUser(@PathVariable Integer userId) {
 		User user = userDaoService.findOne(userId);
 		if(user == null) 
 			throw new UserNotFoundException("id = "+userId);
 		
-		return user;
+		
+		Resource<User> resource = new Resource<User>(user);
+		ControllerLinkBuilder controllerLinkBuilder = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(this.getClass()).retrieveAllUsers());
+		
+		resource.add(controllerLinkBuilder.withRel("all-users"));
+		
+		//return user;
+		return resource;
 	}
 	
 	//@RequestBody is used to Map input Post parameters to Object specified
@@ -47,7 +59,7 @@ public class UserResource {
 	//It is good practice to send HTTP code 201 for new creation and the URL for resource should be returned. It will be placed
 	//in header with name location by ResponseEntity Object.
 	@PostMapping("/users")
-	public ResponseEntity<Object> createUser(@RequestBody User user) {
+	public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
 		User savedUser = userDaoService.save(user);
 		
 		URI newUserUri = ServletUriComponentsBuilder
@@ -65,7 +77,7 @@ public class UserResource {
 		
 		if(userToDelete == null) 
 			throw new UserNotFoundException("id = "+id);
-		
+
 		return ResponseEntity.noContent().build();
 	}
 	

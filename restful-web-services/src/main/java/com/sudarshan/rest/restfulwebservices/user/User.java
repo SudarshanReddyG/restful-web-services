@@ -2,12 +2,17 @@ package com.sudarshan.rest.restfulwebservices.user;
 
 import java.util.Date;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+
 public class User {
 	
 	private Integer id;
 	
+	@Size(min=2, message="Name should be a minimum size of two")
 	private String name;
 	
+	@Past(message="The date value should be past value")
 	private Date dateOfBirth;
 
 	public Integer getId() {
