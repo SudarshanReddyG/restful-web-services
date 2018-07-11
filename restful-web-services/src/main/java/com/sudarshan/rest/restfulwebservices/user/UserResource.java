@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.context.MessageSource;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UserResource {
 	private UserDaoService userDaoService;
 	
 	public UserResource(UserDaoService userDaoService) {
-		this.userDaoService = userDaoService; 
+		this.userDaoService = userDaoService;
 	}
 	
 	@GetMapping("/users")
